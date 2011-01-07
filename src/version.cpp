@@ -28,7 +28,7 @@
  
 namespace deliberate {
 
-  QString ProgramVersion::VersionNumber ("0.0.1");
+  QString ProgramVersion::VersionNumber ("0.0.2");
 
   QString ProgramVersion::ProgramName("Crawl");
   QString ProgramVersion::copyright ("Copyright (C) 2011 Bernd Stramm");
