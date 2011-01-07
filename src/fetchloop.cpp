@@ -4,7 +4,7 @@
 /****************************************************************
  * This file is distributed under the following license:
  *
- * Copyright (C) 2010, Bernd Stramm
+ * Copyright (C) 2011, Bernd Stramm
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -88,7 +88,7 @@ FetchLoop::ReadReply (QNetworkReply * reply)
     return;
   }
   QByteArray data = reply->readAll ();
-qDebug () << " reply has " << data.size() << " bytes from " << reply->url();
+  baseUrl = reply->url().toString();
   view->setContent (data, QString(), reply->url());
 }
 
@@ -126,31 +126,32 @@ FetchLoop::LoadFinished (bool ok)
 {
   if (!ok) {
     Done (false);
-qDebug () << " Load False";
     return;
   }
   QWebPage * page = view->page ();
   if (page == 0) {
     Done (false);
-qDebug () << " No Page";
     return;
   }
   QWebFrame * mainFrame = page->mainFrame();
   if (mainFrame == 0) {
     Done (false);
-qDebug () << " No Frame";
     return;
   }
   QList<QWebFrame*> frames = mainFrame->childFrames();
   frames.prepend (mainFrame);
-qDebug () << " page has total of " << frames.count() << " frames";
   for (int f=0; f<frames.count(); f++) {
     QWebFrame * frame = frames.at(f);
-qDebug () << " frame " << f << frame;
     if (frame) {
       QWebElementCollection links = frame->findAllElements ("A");
       foreach (QWebElement elt, links) {
         QString linkText (elt.attribute ("href"));
+        QUrl linkUrl (linkText);
+        if (linkUrl.scheme() == "") {
+          QString sep (linkText.startsWith ('/') 
+                       || baseUrl.endsWith('/') ? "" : "/");
+          linkText.prepend (baseUrl + sep);
+        }
         if (linkText.length() > 0) {
           emit FoundLink (linkText);
         }
