@@ -8,5 +8,5 @@ Icon=crawl
 StartupNotify=false
 Terminal=false
 Type=Application
-Categories=Utility;Networking;
+Categories=Network;Utility;
 X-Desktop-File-Install-Version=0.16
