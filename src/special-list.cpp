@@ -1,6 +1,5 @@
-#ifndef CRAWL_FETCHLOOP_H
-#define CRAWL_FETCHLOOP_H
 
+#include "special-list.h"
 
 /****************************************************************
  * This file is distributed under the following license:
@@ -23,49 +22,44 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
-#include <QObject>
-#include <QWebView>
-
-class QTimer;
-class QNetworkAccessManager;
+#include <QRegExp>
+#include <QDebug>
 
 namespace pescador
 {
-class FetchLoop : public QObject
+
+SpecialList::SpecialList ()
 {
-Q_OBJECT
-public:
+}
 
-  FetchLoop (QObject *parent, QWebView * spyView);
-  
-  void Fetch (const QUrl &);
+void
+SpecialList::Init ()
+{
+  knownHosts << "google.com" << "www.google.com"
+             << "amazon.com"
+             << "doubleclick.net";
+}
 
-private slots:
-
-  void LoadFinished (bool ok);
-  void StopLoading ();
-  void ReadReply (QNetworkReply * reply);
-
-signals:
-
-  void FoundLink (const QString & link);
-  void PageDone (bool ok);
-
-private:
-
-  bool DontFetch (const QUrl & url);
-  void Done (bool ok);
-
-  QWebView                 * view;
-  QNetworkAccessManager    * net;
-  QStringList                dontFetch;
-  QString                    baseUrl;
-
-  QTimer  *loadTimeout;
-
-};
+bool
+SpecialList::IsKnown (const QUrl & suspect)
+{
+  QString host = suspect.host ().trimmed ();
+  while (host.length() > 0 && host.endsWith('/')) {
+    host.chop(1);
+  }
+  if (host.length() < 6) {
+    return false;
+  }
+  QRegExp pat (QString ("*%1").arg(host));
+  pat.setPatternSyntax(QRegExp::Wildcard);
+qDebug () << " checking for host pattern " << pat.pattern();
+qDebug () << "  in " << knownHosts;
+  int index = knownHosts.indexOf (pat);
+qDebug () << "      index " << index;
+  if (index >= 0) {
+    return true;
+  }
+  return false;
+}
 
 } // namespace
-
-#endif

@@ -33,7 +33,7 @@
 #include <QTimer>
 #include <QDebug>
 
-namespace crawl
+namespace pescador
 {
 
 FetchLoop::FetchLoop (QObject *parent, QWebView * spyView)

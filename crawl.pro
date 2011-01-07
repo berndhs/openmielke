@@ -77,6 +77,7 @@ HEADERS = \
           src/version.h \
           src/helpview.h \
           src/fetchloop.h \
+          src/special-list.h \
 
 
 SOURCES = \
@@ -89,4 +90,5 @@ SOURCES = \
           src/version.cpp \
           src/helpview.cpp \
           src/fetchloop.cpp \
+          src/special-list.cpp \
 

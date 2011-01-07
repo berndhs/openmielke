@@ -22,7 +22,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-namespace crawl
+namespace pescador
 {
 } // namespace
 

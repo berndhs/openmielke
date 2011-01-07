@@ -1,6 +1,5 @@
-#ifndef CRAWL_FETCHLOOP_H
-#define CRAWL_FETCHLOOP_H
-
+#ifndef PESCADOR_SPECIAL_LIST_H
+#define PESCADOR_SPECIAL_LIST_H
 
 /****************************************************************
  * This file is distributed under the following license:
@@ -23,47 +22,27 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
-#include <QObject>
-#include <QWebView>
-
-class QTimer;
-class QNetworkAccessManager;
+#include <QUrl>
+#include <QString>
+#include <QStringList>
 
 namespace pescador
 {
-class FetchLoop : public QObject
+
+class SpecialList
 {
-Q_OBJECT
 public:
 
-  FetchLoop (QObject *parent, QWebView * spyView);
-  
-  void Fetch (const QUrl &);
+  SpecialList ();
 
-private slots:
+  void Init ();
 
-  void LoadFinished (bool ok);
-  void StopLoading ();
-  void ReadReply (QNetworkReply * reply);
-
-signals:
-
-  void FoundLink (const QString & link);
-  void PageDone (bool ok);
+  bool IsKnown (const QUrl & suspect);
 
 private:
 
-  bool DontFetch (const QUrl & url);
-  void Done (bool ok);
-
-  QWebView                 * view;
-  QNetworkAccessManager    * net;
-  QStringList                dontFetch;
-  QString                    baseUrl;
-
-  QTimer  *loadTimeout;
-
+  QStringList knownHosts;
+   
 };
 
 } // namespace

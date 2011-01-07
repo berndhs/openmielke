@@ -86,7 +86,7 @@ main (int argc, char *argv[])
   }
 #endif
   
-  crawl::Crawl   crawl;
+  pescador::Crawl   crawl;
 
   app.setWindowIcon (crawl.windowIcon());
   crawl.Init (app);

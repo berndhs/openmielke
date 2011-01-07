@@ -32,8 +32,10 @@ class QApplication;
 
 using namespace deliberate;
 
-namespace crawl 
+namespace pescador 
 {
+
+class SpecialList;
 
 class Crawl : public QMainWindow
 {
@@ -100,6 +102,7 @@ private:
   QString       htmlEmbed;
 
   FetchLoop    *loop;
+  SpecialList  *blackList;
 
 };
 

@@ -25,6 +25,7 @@
 #include "deliberate.h"
 #include "version.h"
 #include "helpview.h"
+#include "special-list.h"
 #include <QSize>
 #include <QDebug>
 #include <QMessageBox>
@@ -33,7 +34,7 @@
 
 using namespace deliberate;
 
-namespace crawl
+namespace pescador
 {
 
 Crawl::Crawl (QWidget *parent)
@@ -43,10 +44,13 @@ Crawl::Crawl (QWidget *parent)
    configEdit (this),
    helpView (0),
    runAgain (false),
-   loop (0)
+   loop (0),
+   blackList (0)
 {
   mainUi.setupUi (this);
   loop = new FetchLoop (this, mainUi.strollView);
+  blackList = new SpecialList;
+  blackList->Init ();
   mainUi.actionRestart->setEnabled (false);
   helpView = new HelpView (this);
   Connect ();
@@ -267,7 +271,7 @@ Crawl::CatchLink (const QString & link)
   qDebug () << " got link " << link;
   QUrl url (link);
   if (url.scheme() == "http" || url.scheme() == "https") {
-    if (!oldLinks.contains (url)) {
+    if (!oldLinks.contains (url) && !blackList->IsKnown(url)) {
       seedList.append (url);
       oldLinks.insert (url);
     }
