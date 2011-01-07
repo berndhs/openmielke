@@ -42,7 +42,8 @@ Crawl::Crawl (QWidget *parent)
    app (0),
    configEdit (this),
    helpView (0),
-   runAgain (false)
+   runAgain (false),
+   loop (this)
 {
   mainUi.setupUi (this);
   mainUi.actionRestart->setEnabled (false);
@@ -104,7 +105,7 @@ Crawl::Show ()
                         .arg (head)
                         .arg (msgList.join ("<br>\n"));
   mainUi.webView->setHtml (html);
-  qDebug () << html;
+  mainUi.linkCount->setValue (seedList.count());
 }
 
 void
@@ -126,6 +127,11 @@ Crawl::Connect ()
            this, SLOT (StartCrawl ()));
   connect (mainUi.addButton, SIGNAL (clicked()),
            this, SLOT (AddSeed ()));
+
+  connect (&loop, SIGNAL (FoundLink (const QString &)),
+           this, SLOT (CatchLink (const QString &)));
+  connect (&loop, SIGNAL (PageDone (bool)),
+           this, SLOT (PageDone (bool)));
 }
 
 void
@@ -232,8 +238,29 @@ void
 Crawl::StartCrawl ()
 {
   qDebug () << " start crawling";
+  QList <QUrl> list = seedList;
+  seedList.clear ();
+  while (!list.isEmpty()) {
+    loop.Fetch (list.takeFirst());
+  }
 }
 
+void
+Crawl::CatchLink (const QString & link)
+{
+  qDebug () << " got link " << link;
+  QUrl url (link);
+  if (url.scheme() == "http" || url.scheme() == "https") {
+    seedList.append (url);
+  }
+}
+
+void
+Crawl::PageDone (bool ok)
+{
+  qDebug () << " Page DOne " << ok;
+  Show ();
+}
 
 
 } // namespace

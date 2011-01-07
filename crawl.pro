@@ -75,6 +75,7 @@ HEADERS = \
           src/deliberate.h \
           src/version.h \
           src/helpview.h \
+          src/fetchloop.h \
 
 
 SOURCES = \
@@ -86,4 +87,5 @@ SOURCES = \
           src/deliberate.cpp \
           src/version.cpp \
           src/helpview.cpp \
+          src/fetchloop.cpp \
 

@@ -25,6 +25,7 @@
 #include "ui_crawl.h"
 #include "config-edit.h"
 #include "helpview.h"
+#include "fetchloop.h"
 #include <QUrl>
 
 class QApplication;
@@ -67,6 +68,8 @@ private slots:
 
   void StartCrawl ();
   void AddSeed ();
+  void CatchLink (const QString & link);
+  void PageDone (bool ok);
 
 private:
 
@@ -90,6 +93,8 @@ private:
 
   QString       head;
   QString       htmlEmbed;
+
+  FetchLoop     loop;
 
 };
 
