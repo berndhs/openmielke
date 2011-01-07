@@ -38,6 +38,7 @@ FetchLoop::Fetch (const QUrl & startUrl)
       Done (true);
       return;
     } else {
+      loadTimeout->stop ();
       loadTimeout->start (30*1000);
       view->load (startUrl);
     }
@@ -49,6 +50,7 @@ FetchLoop::Fetch (const QUrl & startUrl)
 void
 FetchLoop::Done (bool ok)
 {
+  qDebug () << " done " << ok;
   loadTimeout->stop ();
   emit PageDone (ok);
 }
