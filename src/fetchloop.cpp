@@ -96,8 +96,8 @@ FetchLoop::ReadReply (QNetworkReply * reply)
     return ;
   }
   baseUrl = reply->url().toString();
-  //view->setContent (data, QString(), reply->url());
-  view->setContent (data);
+  view->setContent (data, QString(), reply->url());
+  //view->setContent (data);
 }
 
 void
@@ -159,7 +159,7 @@ FetchLoop::LoadFinished (bool ok)
         }
         QString linkText (elt.attribute ("href"));
         QUrl linkUrl (linkText);
-        if (linkUrl.scheme() == "") {
+        if (linkUrl.scheme().length() < 1) {
           QString sep (linkText.startsWith ('/') 
                        || baseUrl.endsWith('/') ? "" : "/");
           linkText.prepend (baseUrl + sep);
