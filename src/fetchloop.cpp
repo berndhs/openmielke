@@ -9,10 +9,14 @@
 namespace crawl
 {
 
-FetchLoop::FetchLoop (QObject *parent)
+FetchLoop::FetchLoop (QObject *parent, QWebView * spyView)
   :QObject (parent)
 {
-  view = new QWebView;
+  if (spyView) {
+    view = spyView;
+  } else {
+    view = new QWebView;
+  }
   connect (view, SIGNAL (loadFinished (bool)),
           this, SLOT (LoadFinished (bool)));
   dontFetch << ".exe" 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>483</width>
-    <height>331</height>
+    <width>488</width>
+    <height>588</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,33 +19,52 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0" colspan="2">
-     <widget class="QWebView" name="webView">
-      <property name="url">
-       <url>
-        <string>about:blank</string>
-       </url>
+    <item row="0" column="0">
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
       </property>
+      <widget class="QWebView" name="webView">
+       <property name="url">
+        <url>
+         <string>about:blank</string>
+        </url>
+       </property>
+      </widget>
+      <widget class="QWebView" name="strollView">
+       <property name="url">
+        <url>
+         <string>about:blank</string>
+        </url>
+       </property>
+      </widget>
      </widget>
     </item>
     <item row="1" column="0">
-     <widget class="QProgressBar" name="sendProgress">
-      <property name="value">
-       <number>0</number>
-      </property>
-      <property name="format">
-       <string>%v of %m</string>
-      </property>
-     </widget>
+     <widget class="QLineEdit" name="currentFetch"/>
     </item>
-    <item row="1" column="1">
-     <widget class="QLabel" name="workLabel">
-      <property name="text">
-       <string>working</string>
-      </property>
-     </widget>
+    <item row="2" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QLabel" name="workLabel">
+        <property name="text">
+         <string>working</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QProgressBar" name="sendProgress">
+        <property name="value">
+         <number>0</number>
+        </property>
+        <property name="format">
+         <string>%v of %m</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
-    <item row="2" column="0" colspan="2">
+    <item row="3" column="0">
      <layout class="QFormLayout" name="formLayout">
       <property name="fieldGrowthPolicy">
        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
@@ -62,7 +81,7 @@
       </item>
      </layout>
     </item>
-    <item row="3" column="0" colspan="2">
+    <item row="4" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QSpinBox" name="linkCount">
@@ -94,7 +113,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>483</width>
+     <width>488</width>
      <height>25</height>
     </rect>
    </property>

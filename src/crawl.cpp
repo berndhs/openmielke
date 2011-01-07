@@ -43,9 +43,10 @@ Crawl::Crawl (QWidget *parent)
    configEdit (this),
    helpView (0),
    runAgain (false),
-   loop (this)
+   loop (0)
 {
   mainUi.setupUi (this);
+  loop = new FetchLoop (this, mainUi.strollView);
   mainUi.actionRestart->setEnabled (false);
   helpView = new HelpView (this);
   Connect ();
@@ -129,9 +130,9 @@ Crawl::Connect ()
   connect (mainUi.addButton, SIGNAL (clicked()),
            this, SLOT (AddSeed ()));
 
-  connect (&loop, SIGNAL (FoundLink (const QString &)),
+  connect (loop, SIGNAL (FoundLink (const QString &)),
            this, SLOT (CatchLink (const QString &)));
-  connect (&loop, SIGNAL (PageDone (bool)),
+  connect (loop, SIGNAL (PageDone (bool)),
            this, SLOT (PageDone (bool)));
 }
 
@@ -251,7 +252,9 @@ void
 Crawl::CrawlNext ()
 {
   if (!sendQueue.isEmpty ()) {
-    loop.Fetch (sendQueue.takeFirst());
+    QUrl nextUrl = sendQueue.takeFirst ();
+    mainUi.currentFetch->setText (nextUrl.toString());
+    loop->Fetch (nextUrl);
     mainUi.workLabel->setText ("working...");
   } else {
     mainUi.workLabel->setText ("Done");

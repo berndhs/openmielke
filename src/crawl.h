@@ -99,7 +99,7 @@ private:
   QString       head;
   QString       htmlEmbed;
 
-  FetchLoop     loop;
+  FetchLoop    *loop;
 
 };
 

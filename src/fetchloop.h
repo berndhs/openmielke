@@ -13,7 +13,7 @@ class FetchLoop : public QObject
 Q_OBJECT
 public:
 
-  FetchLoop (QObject *parent=0);
+  FetchLoop (QObject *parent, QWebView * spyView);
   
   void Fetch (const QUrl &);
 
