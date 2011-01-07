@@ -264,7 +264,10 @@ Crawl::CatchLink (const QString & link)
   qDebug () << " got link " << link;
   QUrl url (link);
   if (url.scheme() == "http" || url.scheme() == "https") {
-    seedList.append (url);
+    if (!oldLinks.contains (url)) {
+      seedList.append (url);
+      oldLinks.insert (url);
+    }
   }
 }
 

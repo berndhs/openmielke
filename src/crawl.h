@@ -92,6 +92,7 @@ private:
   QStringList   msgList;
   QList<QUrl>   seedList;
   QList<QUrl>   sendQueue;
+  QSet <QUrl>   oldLinks;
 
   int           progress;
 

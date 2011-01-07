@@ -71,6 +71,7 @@ FetchLoop::StopLoading ()
 {
   loadTimeout->stop ();
   view->stop ();
+  Done (false);
 }
 
 void
