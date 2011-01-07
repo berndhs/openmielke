@@ -65,6 +65,7 @@ Crawl::Init (QApplication &ap)
   mainUi.webView->page()
               ->setLinkDelegationPolicy (QWebPage::DelegateAllLinks);
   initDone = true;
+  mainUi.workLabel->setText ("Idle");
 }
 
 bool
@@ -238,10 +239,22 @@ void
 Crawl::StartCrawl ()
 {
   qDebug () << " start crawling";
-  QList <QUrl> list = seedList;
+  sendQueue = seedList;
   seedList.clear ();
-  while (!list.isEmpty()) {
-    loop.Fetch (list.takeFirst());
+  mainUi.sendProgress->setMaximum (sendQueue.count());
+  progress = 0;
+  mainUi.sendProgress->setValue (progress);
+  CrawlNext ();
+}
+
+void
+Crawl::CrawlNext ()
+{
+  if (!sendQueue.isEmpty ()) {
+    loop.Fetch (sendQueue.takeFirst());
+    mainUi.workLabel->setText ("working...");
+  } else {
+    mainUi.workLabel->setText ("Done");
   }
 }
 
@@ -258,8 +271,11 @@ Crawl::CatchLink (const QString & link)
 void
 Crawl::PageDone (bool ok)
 {
-  qDebug () << " Page DOne " << ok;
+  qDebug () << " Page Done " << ok;
   Show ();
+  progress++;
+  mainUi.sendProgress->setValue (progress);
+  CrawlNext ();
 }
 
 

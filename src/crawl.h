@@ -75,6 +75,7 @@ private:
 
   void Connect ();
   void CloseCleanup ();
+  void CrawlNext ();
 
   QString Link (const QString & target);
 
@@ -90,6 +91,9 @@ private:
 
   QStringList   msgList;
   QList<QUrl>   seedList;
+  QList<QUrl>   sendQueue;
+
+  int           progress;
 
   QString       head;
   QString       htmlEmbed;
