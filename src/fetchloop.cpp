@@ -87,9 +87,17 @@ FetchLoop::ReadReply (QNetworkReply * reply)
   if (reply == 0) {
     return;
   }
-  QByteArray data = reply->readAll ();
+  int maxd (10*1024*1024);
+  QByteArray data = reply->read (maxd);
+  qDebug () << " data size " << data.size () 
+         << " for url " << reply->url();
+  if (data.size() >= maxd) {
+    Done (false);
+    return ;
+  }
   baseUrl = reply->url().toString();
-  view->setContent (data, QString(), reply->url());
+  //view->setContent (data, QString(), reply->url());
+  view->setContent (data);
 }
 
 void
@@ -144,7 +152,11 @@ FetchLoop::LoadFinished (bool ok)
     QWebFrame * frame = frames.at(f);
     if (frame) {
       QWebElementCollection links = frame->findAllElements ("A");
+      int localLinkCount (0);
       foreach (QWebElement elt, links) {
+        if (localLinkCount++ > 1000) {
+          break;
+        }
         QString linkText (elt.attribute ("href"));
         QUrl linkUrl (linkText);
         if (linkUrl.scheme() == "") {

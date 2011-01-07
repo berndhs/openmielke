@@ -24,6 +24,7 @@
 # ****************************************************************/
 
 MYNAME = crawl
+APPBIN = pescador
 
 TEMPLATE = app
 
@@ -37,13 +38,13 @@ MAKEFILE = Make_$${MYNAME}
 
 CONFIG(debug, debug|release) {
   DEFINES += DELIBERATE_DEBUG=1
-  TARGET = bin/$${MYNAME}_d
+  TARGET = bin/$${APPBIN}_d
   OBJECTS_DIR = tmp/debug/obj
   message ("DEBUG cxx-flags used $${QMAKE_CXXFLAGS_DEBUG}")
   message ("DEBUG c-flags used $${QMAKE_CFLAGS_DEBUG}")
 } else {
   DEFINES += DELIBERATE_DEBUG=0
-  TARGET = bin/$${MYNAME}
+  TARGET = bin/$${APPBIN}
   OBJECTS_DIR = tmp/release/obj
   QMAKE_CXXFLAGS_RELEASE -= -g
   QMAKE_CFLAGS_RELEASE -= -g

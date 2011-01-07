@@ -14,18 +14,19 @@
 #//
 
 PROJECT_NAME=crawl
+APPEXEC=pescador
 PRO_FILE = ${PROJECT_NAME}.pro
 MAKEFILE = Make_${PROJECT_NAME}
 TOP_MAKEFILE = Makefile
-TARGETS = bin/${PROJECT_NAME}
-DESKTOP_FILE = ${PROJECT_NAME}.desktop
+TARGETS = bin/${APPEXEC}
+DESKTOP_FILE = ${APPEXEC}.desktop
 DESKTOP_DIR = /usr/share/applications
-ICON_FILE = ${PROJECT_NAME}.png
+ICON_FILE = ${APPEXEC}.png
 ICON_DIR = /usr/share/pixmaps
 
 all: $(MAKEFILE)
 	$(MAKE) -f $(MAKEFILE) all
-	ls -ltr bin/${PROJECT_NAME}*
+	ls -ltr bin/${APPEXEC}*
 
 clean: $(MAKEFILE) FORCE
 	$(MAKE) -f $(MAKEFILE) clean
