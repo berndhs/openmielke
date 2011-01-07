@@ -141,11 +141,20 @@ qDebug () << " No Page";
 qDebug () << " No Frame";
     return;
   }
-  QWebElementCollection links = mainFrame->findAllElements ("A");
-  foreach (QWebElement elt, links) {
-    QString linkText (elt.attribute ("href"));
-    if (linkText.length() > 0) {
-      emit FoundLink (linkText);
+  QList<QWebFrame*> frames = mainFrame->childFrames();
+  frames.prepend (mainFrame);
+qDebug () << " page has total of " << frames.count() << " frames";
+  for (int f=0; f<frames.count(); f++) {
+    QWebFrame * frame = frames.at(f);
+qDebug () << " frame " << f << frame;
+    if (frame) {
+      QWebElementCollection links = frame->findAllElements ("A");
+      foreach (QWebElement elt, links) {
+        QString linkText (elt.attribute ("href"));
+        if (linkText.length() > 0) {
+          emit FoundLink (linkText);
+        }
+      }
     }
   }
   Done (true);
