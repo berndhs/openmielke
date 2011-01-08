@@ -32,7 +32,7 @@ class QApplication;
 
 using namespace deliberate;
 
-namespace pescador 
+namespace openmielke 
 {
 
 class SpecialList;

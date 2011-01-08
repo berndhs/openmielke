@@ -24,7 +24,7 @@
 # ****************************************************************/
 
 MYNAME = crawl
-APPBIN = pescador
+APPBIN = openmielke
 
 TEMPLATE = app
 

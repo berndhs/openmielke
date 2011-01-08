@@ -25,7 +25,7 @@
 #include <QRegExp>
 #include <QDebug>
 
-namespace pescador
+namespace openmielke
 {
 
 SpecialList::SpecialList ()

@@ -1,10 +1,10 @@
 
 [Desktop Entry]
-Name=Crawler Program
+Name=OpenMielke Crawler Program
 GenericName=Web Program for Keeping a Low Profile
 Comment=Duck
-Exec=crawl
-Icon=crawl
+Exec=opemielke
+Icon=opemielke
 StartupNotify=false
 Terminal=false
 Type=Application

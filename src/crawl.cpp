@@ -34,7 +34,7 @@
 
 using namespace deliberate;
 
-namespace pescador
+namespace openmielke
 {
 
 Crawl::Crawl (QWidget *parent)

@@ -26,7 +26,7 @@
 #include <QString>
 #include <QStringList>
 
-namespace pescador
+namespace openmielke
 {
 
 class SpecialList

@@ -33,7 +33,7 @@
 #include <QTimer>
 #include <QDebug>
 
-namespace pescador
+namespace openmielke
 {
 
 FetchLoop::FetchLoop (QObject *parent, QWebView * spyView)

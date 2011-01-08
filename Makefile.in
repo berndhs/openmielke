@@ -14,7 +14,7 @@
 #//
 
 PROJECT_NAME=crawl
-APPEXEC=pescador
+APPEXEC=openmielke
 PRO_FILE = ${PROJECT_NAME}.pro
 MAKEFILE = Make_${PROJECT_NAME}
 TOP_MAKEFILE = Makefile

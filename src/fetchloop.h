@@ -30,7 +30,7 @@
 class QTimer;
 class QNetworkAccessManager;
 
-namespace pescador
+namespace openmielke
 {
 class FetchLoop : public QObject
 {
