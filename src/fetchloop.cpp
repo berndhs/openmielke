@@ -51,9 +51,15 @@ FetchLoop::FetchLoop (QObject *parent, QWebView * spyView)
             << ".pdf"
             << ".gz"
             << ".bz"
+            << ".rar"
+            << ".tgz"
+            << ".tex"
+            << ".doc"
             << ".jpg"
             << ".png"
             << ".gif"
+            << ".iso" 
+            << ".img"
             ;
   loadTimeout = new QTimer (this);
   connect (loadTimeout, SIGNAL (timeout()),
@@ -88,6 +94,7 @@ FetchLoop::ReadReply (QNetworkReply * reply)
     return;
   }
   int maxd (10*1024*1024);
+qDebug () << " ReadReply network error " << reply->error ();
   QByteArray data = reply->read (maxd);
   qDebug () << " data size " << data.size () 
          << " for url " << reply->url();
@@ -148,6 +155,7 @@ FetchLoop::LoadFinished (bool ok)
   }
   QList<QWebFrame*> frames = mainFrame->childFrames();
   frames.prepend (mainFrame);
+qDebug () << " page from " << baseUrl << " frame count " << frames.count();
   for (int f=0; f<frames.count(); f++) {
     QWebFrame * frame = frames.at(f);
     if (frame) {

@@ -48,8 +48,8 @@ Crawl::Crawl (QWidget *parent)
    blackList (0)
 {
   mainUi.setupUi (this);
-  mainUi.webView->page()->setLinkDelegationPolicy 
-                           (QWebPage::DelegateAllLinks);
+  myPage = new QWebPage (this);
+  mainUi.seedView->setPage (myPage);
   loop = new FetchLoop (this, mainUi.strollView);
   blackList = new SpecialList;
   blackList->Init ();
@@ -68,9 +68,6 @@ Crawl::Init (QApplication &ap)
   htmlEmbed = Settings().value ("view/htmlembed",htmlEmbed).toString();
   Settings().setValue ("view/htmlembed",htmlEmbed);
   Settings().sync();
-  msgList.append (Link ("http://maui.ipv6.berndnet"));
-  mainUi.webView->page()
-              ->setLinkDelegationPolicy (QWebPage::DelegateAllLinks);
   initDone = true;
   mainUi.workLabel->setText ("Idle");
 }
@@ -112,10 +109,13 @@ Crawl::Show ()
   QString html = htmlEmbed
                         .arg (head)
                         .arg (msgList.join ("<br>\n"));
-  mainUi.webView->setHtml (html);
-  mainUi.webView->page()
+  mainUi.seedView->setContent (html.toUtf8());
+  mainUi.seedView->page()
+              ->setLinkDelegationPolicy (QWebPage::DelegateAllLinks);
+  mainUi.strollView->page()
               ->setLinkDelegationPolicy (QWebPage::DelegateAllLinks);
   mainUi.linkCount->setValue (seedList.count());
+qDebug () << " page delegation policy " << mainUi.seedView->page()->linkDelegationPolicy();
 }
 
 void
@@ -131,15 +131,21 @@ Crawl::Connect ()
            this, SLOT (License ()));
   connect (mainUi.actionRestart, SIGNAL (triggered()),
            this, SLOT (Restart ()));
-  connect (mainUi.webView, SIGNAL (linkClicked (const QUrl &)),
+  connect (mainUi.seedView, SIGNAL (linkClicked (const QUrl &)),
            this, SLOT (LinkTo (const QUrl &)));
   connect (mainUi.crawlButton, SIGNAL (clicked()),
            this, SLOT (StartCrawl ()));
   connect (mainUi.addButton, SIGNAL (clicked()),
            this, SLOT (AddSeed ()));
 
-  connect (mainUi.webView, SIGNAL (linkClicked(const QUrl &)),
+  connect (mainUi.seedView, SIGNAL (linkClicked(const QUrl &)),
            this, SLOT (LinkClicked (const QUrl &)));
+  connect (mainUi.seedView->page (), SIGNAL (linkClicked(const QUrl &)),
+           this, SLOT (PageLinkClicked (const QUrl &)));
+  connect (mainUi.strollView, SIGNAL (linkClicked(const QUrl &)),
+           this, SLOT (LinkClicked (const QUrl &)));
+  connect (mainUi.strollView->page (), SIGNAL (linkClicked(const QUrl &)),
+           this, SLOT (PageLinkClicked (const QUrl &)));
 
   connect (loop, SIGNAL (FoundLink (const QString &)),
            this, SLOT (CatchLink (const QString &)));
@@ -241,7 +247,7 @@ Crawl::LinkTo (const QUrl & url)
 {
   qDebug () << url;
   if (url.isValid()) {
-    mainUi.webView->load (url);
+    mainUi.seedView->load (url);
   }
 }
 
@@ -304,7 +310,13 @@ Crawl::PageDone (bool ok)
 void
 Crawl::LinkClicked (const QUrl & url)
 {
-  qDebug () << " clicked on " << url;
+  qDebug () << " view clicked on " << url;
+}
+
+void
+Crawl::PageLinkClicked (const QUrl & url)
+{
+  qDebug () << " page clicked on " << url;
 }
 
 

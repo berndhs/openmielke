@@ -20,30 +20,27 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QSplitter" name="splitter">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
+     <widget class="QWebView" name="strollView">
+      <property name="url">
+       <url>
+        <string>about:blank</string>
+       </url>
       </property>
-      <widget class="QWebView" name="webView">
-       <property name="url">
-        <url>
-         <string>about:blank</string>
-        </url>
-       </property>
-      </widget>
-      <widget class="QWebView" name="strollView">
-       <property name="url">
-        <url>
-         <string>about:blank</string>
-        </url>
-       </property>
-      </widget>
      </widget>
     </item>
     <item row="1" column="0">
-     <widget class="QLineEdit" name="currentFetch"/>
+     <widget class="QWebView" name="seedView">
+      <property name="url">
+       <url>
+        <string>about:blank</string>
+       </url>
+      </property>
+     </widget>
     </item>
     <item row="2" column="0">
+     <widget class="QLineEdit" name="currentFetch"/>
+    </item>
+    <item row="4" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QLabel" name="workLabel">
@@ -64,7 +61,7 @@
       </item>
      </layout>
     </item>
-    <item row="3" column="0">
+    <item row="6" column="0">
      <layout class="QFormLayout" name="formLayout">
       <property name="fieldGrowthPolicy">
        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
@@ -81,7 +78,7 @@
       </item>
      </layout>
     </item>
-    <item row="4" column="0">
+    <item row="8" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QSpinBox" name="linkCount">

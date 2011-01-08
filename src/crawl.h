@@ -73,6 +73,7 @@ private slots:
   void CatchLink (const QString & link);
   void PageDone (bool ok);
   void LinkClicked (const QUrl & url);
+  void PageLinkClicked (const QUrl & url);
 
 private:
 
@@ -105,6 +106,7 @@ private:
 
   FetchLoop    *loop;
   SpecialList  *blackList;
+  QWebPage     *myPage;
 
 };
 
