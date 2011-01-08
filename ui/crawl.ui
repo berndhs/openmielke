@@ -89,15 +89,33 @@
       </item>
       <item>
        <widget class="QPushButton" name="addButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string>Add Seed</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="crawlButton">
+       <widget class="openmielke::CrawlButton" name="crawlButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>90</width>
+          <height>40</height>
+         </size>
+        </property>
         <property name="text">
-         <string>Crawl</string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -179,6 +197,11 @@
    <class>QWebView</class>
    <extends>QWidget</extends>
    <header>QtWebKit/QWebView</header>
+  </customwidget>
+  <customwidget>
+   <class>openmielke::CrawlButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">src/crawl-button.h</header>
   </customwidget>
  </customwidgets>
  <resources>

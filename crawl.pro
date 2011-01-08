@@ -78,6 +78,7 @@ HEADERS = \
           src/helpview.h \
           src/fetchloop.h \
           src/special-list.h \
+          src/crawl-button.h \
 
 
 SOURCES = \
@@ -91,4 +92,5 @@ SOURCES = \
           src/helpview.cpp \
           src/fetchloop.cpp \
           src/special-list.cpp \
+          src/crawl-button.cpp \
 
