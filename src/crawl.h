@@ -72,6 +72,7 @@ private slots:
   void AddSeed ();
   void CatchLink (const QString & link);
   void PageDone (bool ok);
+  void LinkClicked (const QUrl & url);
 
 private:
 
@@ -79,11 +80,12 @@ private:
   void CloseCleanup ();
   void CrawlNext ();
 
-  QString Link (const QString & target);
+  QString Link (const QString & target, 
+                const QString & scheme = QString ());
 
   bool             initDone;
   QApplication    *app;
-  Ui_CrawlMain    mainUi;
+  Ui_CrawlMain     mainUi;
  
   ConfigEdit       configEdit;
   QStringList      configMessages;

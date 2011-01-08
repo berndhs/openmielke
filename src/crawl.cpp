@@ -48,6 +48,8 @@ Crawl::Crawl (QWidget *parent)
    blackList (0)
 {
   mainUi.setupUi (this);
+  mainUi.webView->page()->setLinkDelegationPolicy 
+                           (QWebPage::DelegateAllLinks);
   loop = new FetchLoop (this, mainUi.strollView);
   blackList = new SpecialList;
   blackList->Init ();
@@ -111,6 +113,8 @@ Crawl::Show ()
                         .arg (head)
                         .arg (msgList.join ("<br>\n"));
   mainUi.webView->setHtml (html);
+  mainUi.webView->page()
+              ->setLinkDelegationPolicy (QWebPage::DelegateAllLinks);
   mainUi.linkCount->setValue (seedList.count());
 }
 
@@ -133,6 +137,9 @@ Crawl::Connect ()
            this, SLOT (StartCrawl ()));
   connect (mainUi.addButton, SIGNAL (clicked()),
            this, SLOT (AddSeed ()));
+
+  connect (mainUi.webView, SIGNAL (linkClicked(const QUrl &)),
+           this, SLOT (LinkClicked (const QUrl &)));
 
   connect (loop, SIGNAL (FoundLink (const QString &)),
            this, SLOT (CatchLink (const QString &)));
@@ -218,9 +225,15 @@ Crawl::License ()
 }
 
 QString
-Crawl::Link (const QString & target)
+Crawl::Link (const QString & target, const QString & scheme)
 {
-  return QString ("<a href=\"%1\">%1</a>").arg (target);
+  QUrl url (target);
+  if (scheme.length() > 0) {
+    url.setScheme (scheme);
+  }
+  return QString ("<a href=\"%2\" name=\"%1\">%1</a>")
+                  .arg (target)
+                  .arg (url.toString());
 }
 
 void
@@ -286,6 +299,12 @@ Crawl::PageDone (bool ok)
   progress++;
   mainUi.sendProgress->setValue (progress);
   CrawlNext ();
+}
+
+void
+Crawl::LinkClicked (const QUrl & url)
+{
+  qDebug () << " clicked on " << url;
 }
 
 

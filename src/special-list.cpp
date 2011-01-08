@@ -52,10 +52,7 @@ SpecialList::IsKnown (const QUrl & suspect)
   }
   QRegExp pat (QString ("*%1").arg(host));
   pat.setPatternSyntax(QRegExp::Wildcard);
-qDebug () << " checking for host pattern " << pat.pattern();
-qDebug () << "  in " << knownHosts;
   int index = knownHosts.indexOf (pat);
-qDebug () << "      index " << index;
   if (index >= 0) {
     return true;
   }
