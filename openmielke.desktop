@@ -3,8 +3,8 @@
 Name=OpenMielke Crawler Program
 GenericName=Web Program for Keeping a Low Profile
 Comment=Duck
-Exec=opemielke
-Icon=opemielke
+Exec=openmielke
+Icon=openmielke
 StartupNotify=false
 Terminal=false
 Type=Application
