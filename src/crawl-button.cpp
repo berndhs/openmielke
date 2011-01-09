@@ -86,7 +86,7 @@ CrawlButton::ShowEyes ()
 void
 CrawlButton::DrawOneEye (QPoint mid, double theta, double r, double wid)
 {
-  QColor eyecolor(QColor(0,50,255,255));
+  QColor eyecolor(QColor(20,100,200,255));
 
   QPainter paint(this);
   paint.setRenderHint(QPainter::HighQualityAntialiasing);

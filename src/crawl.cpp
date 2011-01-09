@@ -31,6 +31,7 @@
 #include <QMessageBox>
 #include <QTimer>
 #include <QCursor>
+#include <QDesktopServices>
 
 using namespace deliberate;
 
@@ -100,25 +101,6 @@ Crawl::Run ()
 }
 
 void
-Crawl::Show ()
-{
-  msgList.clear();
-  for (int i=0; i<seedList.count(); i++) {
-    msgList.append (Link (seedList.at(i).toString()));
-  }
-  QString html = htmlEmbed
-                        .arg (head)
-                        .arg (msgList.join ("<br>\n"));
-  mainUi.seedView->setContent (html.toUtf8());
-  mainUi.seedView->page()
-              ->setLinkDelegationPolicy (QWebPage::DelegateAllLinks);
-  mainUi.strollView->page()
-              ->setLinkDelegationPolicy (QWebPage::DelegateAllLinks);
-  mainUi.linkCount->setValue (seedList.count());
-qDebug () << " page delegation policy " << mainUi.seedView->page()->linkDelegationPolicy();
-}
-
-void
 Crawl::Connect ()
 {
   connect (mainUi.actionQuit, SIGNAL (triggered()), 
@@ -137,6 +119,8 @@ Crawl::Connect ()
            this, SLOT (StartCrawl ()));
   connect (mainUi.addButton, SIGNAL (clicked()),
            this, SLOT (AddSeed ()));
+  connect (mainUi.cycleButton, SIGNAL (clicked()),
+           this, SLOT (Cycle ()));
 
   connect (mainUi.seedView, SIGNAL (linkClicked(const QUrl &)),
            this, SLOT (LinkClicked (const QUrl &)));
@@ -146,6 +130,8 @@ Crawl::Connect ()
            this, SLOT (LinkClicked (const QUrl &)));
   connect (mainUi.strollView->page (), SIGNAL (linkClicked(const QUrl &)),
            this, SLOT (PageLinkClicked (const QUrl &)));
+  connect (mainUi.resultView, SIGNAL (linkClicked(const QUrl &)),
+           this, SLOT (ResultClicked (const QUrl &)));
 
   connect (loop, SIGNAL (FoundLink (const QString &)),
            this, SLOT (CatchLink (const QString &)));
@@ -230,6 +216,36 @@ Crawl::License ()
   }
 }
 
+void
+Crawl::Show ()
+{
+  msgList.clear();
+  for (int i=0; i<sendQueue.count(); i++) {
+    msgList.append (Link (sendQueue.at(i).toString()));
+  }
+  QString seedHtml = htmlEmbed
+                        .arg (head)
+                        .arg (msgList.join ("<br>\n"));
+  mainUi.seedView->setContent (seedHtml.toUtf8());
+  QStringList foundLinks;
+  for (int i=0; i<foundList.count(); i++) {
+    foundLinks.append (ResultLink (foundList.at(i).toString()));
+  }
+  QString resultHtml = htmlEmbed
+                         .arg (head)
+                         .arg (foundLinks.join ("<br>\n"));
+  mainUi.resultView->setContent (resultHtml.toUtf8());
+  mainUi.seedView->page()
+              ->setLinkDelegationPolicy (QWebPage::DelegateAllLinks);
+  mainUi.resultView->page()
+              ->setLinkDelegationPolicy (QWebPage::DelegateAllLinks);
+  mainUi.strollView->page()
+              ->setLinkDelegationPolicy (QWebPage::DelegateAllLinks);
+  mainUi.linkCount->setValue (foundList.count());
+qDebug () << " page delegation policy " << mainUi.seedView->page()->linkDelegationPolicy();
+}
+
+
 QString
 Crawl::Link (const QString & target, const QString & scheme)
 {
@@ -240,6 +256,26 @@ Crawl::Link (const QString & target, const QString & scheme)
   return QString ("<a href=\"%2\" name=\"%1\">%1</a>")
                   .arg (target)
                   .arg (url.toString());
+}
+
+QString
+Crawl::ResultLink (const QString & target)
+{
+  QUrl url (target);
+  QString origScheme = url.scheme();
+  url.setScheme ("crawlseed");
+  QString path = url.path();
+  path.prepend (origScheme);
+  url.setPath (path);
+  QString seedStyle ("style=\"color:green\"");
+  QString targetStyle ("style=\"colod:blue\"");
+  QString targetLink (QString("<a href=\"%1\" %2>%1</a>")
+                  .arg (target)
+                  .arg (targetStyle));
+  QString seedLink (QString("<a href=\"%1\" %3>seed</a>")
+                     .arg (url.toString())
+                     .arg (seedStyle));
+  return QString ("%1--%2").arg (seedLink).arg(targetLink);
 }
 
 void
@@ -255,7 +291,7 @@ void
 Crawl::AddSeed ()
 {
   QString newurl = mainUi.seedUrlEdit->text();
-  seedList.append (QUrl (newurl));
+  sendQueue.append (QUrl (newurl));
   Show ();
 }
 
@@ -263,12 +299,20 @@ void
 Crawl::StartCrawl ()
 {
   qDebug () << " start crawling";
-  sendQueue = seedList;
-  seedList.clear ();
+  foundList.clear ();
   mainUi.sendProgress->setMaximum (sendQueue.count());
   progress = 0;
   mainUi.sendProgress->setValue (progress);
   CrawlNext ();
+}
+
+void
+Crawl::Cycle ()
+{
+  sendQueue = foundList;
+  foundList.clear ();
+  Show ();
+  StartCrawl ();
 }
 
 void
@@ -291,8 +335,10 @@ Crawl::CatchLink (const QString & link)
   QUrl url (link);
   if (url.scheme() == "http" || url.scheme() == "https") {
     if (!oldLinks.contains (url) && !blackList->IsKnown(url)) {
-      seedList.append (url);
+      foundList.append (url);
+      mainUi.linkCount->setValue (foundList.count());
       oldLinks.insert (url);
+      Show ();
     }
   }
 }
@@ -305,6 +351,26 @@ Crawl::PageDone (bool ok)
   progress++;
   mainUi.sendProgress->setValue (progress);
   CrawlNext ();
+}
+
+void
+Crawl::ResultClicked (const QUrl & url)
+{
+  qDebug () << " result view clicked on " << url;
+  QString scheme = url.scheme();
+  if (scheme == "crawlseed") {
+    qDebug () << " crawlseed clicked on " << url;
+    QUrl newUrl (url);
+    QStringList parts = url.path().split('/');
+    parts.removeFirst();
+    QString oldScheme = parts.takeFirst();
+    newUrl.setScheme (oldScheme);
+    newUrl.setPath (parts.join("/"));
+    sendQueue.append (newUrl);
+    Show ();
+  } else {
+    QDesktopServices::openUrl (url);
+  }
 }
 
 void

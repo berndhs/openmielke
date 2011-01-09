@@ -88,6 +88,14 @@ FetchLoop::Fetch (const QUrl & startUrl)
 }
 
 void
+FetchLoop::LoadPage (const QUrl & url)
+{
+  net->get (QNetworkRequest (url));
+  loadTimeout->stop ();
+  loadTimeout->start (30*1000);
+}
+
+void
 FetchLoop::ReadReply (QNetworkReply * reply)
 {
   if (reply == 0) {

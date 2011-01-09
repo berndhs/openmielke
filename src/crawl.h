@@ -70,9 +70,11 @@ private slots:
 
   void StartCrawl ();
   void AddSeed ();
+  void Cycle ();
   void CatchLink (const QString & link);
   void PageDone (bool ok);
   void LinkClicked (const QUrl & url);
+  void ResultClicked (const QUrl & url);
   void PageLinkClicked (const QUrl & url);
 
 private:
@@ -83,6 +85,7 @@ private:
 
   QString Link (const QString & target, 
                 const QString & scheme = QString ());
+  QString ResultLink (const QString & target);
 
   bool             initDone;
   QApplication    *app;
@@ -95,8 +98,8 @@ private:
   bool             runAgain;
 
   QStringList   msgList;
-  QList<QUrl>   seedList;
   QList<QUrl>   sendQueue;
+  QList<QUrl>   foundList;
   QSet <QUrl>   oldLinks;
 
   int           progress;

@@ -40,6 +40,7 @@ public:
   FetchLoop (QObject *parent, QWebView * spyView);
   
   void Fetch (const QUrl &);
+  void LoadPage (const QUrl & url);
 
 private slots:
 
