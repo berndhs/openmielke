@@ -211,9 +211,11 @@ fi
 #
 # make options include file for qmake
 #
+PROJECT=crawl
 echo "DISTRO = ${DISTRO}" > ${OPTIONS_FILE}
 echo "CONFIG += ${DISTRO}" >> ${OPTIONS_FILE}
 echo "DEFINES += DISTRO_${DISTRO}=1" >> ${OPTIONS_FILE}
+echo "MAKEFILE = Make_${PROJECT}" >> ${OPTIONS_FILE}
 #
 # generate Makefile
 #

@@ -31,9 +31,9 @@ TEMPLATE = app
 QT += core gui webkit network xml 
 CONFIG += debug_and_release
 
-MAKEFILE = Make_$${MYNAME}
 !include ("options.pri") {
   message ("no options.pri, using defaults")
+  MAKEFILE = Makefile
 }
 
 CONFIG(debug, debug|release) {
