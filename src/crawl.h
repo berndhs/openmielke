@@ -84,6 +84,8 @@ private:
   void Connect ();
   void CloseCleanup ();
   void CrawlNext ();
+  void ShowSeeds ();
+  void ShowResults ();
 
   QString Link (const QString & target, 
                 const QString & scheme = QString ());

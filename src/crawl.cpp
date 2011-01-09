@@ -227,7 +227,17 @@ Crawl::License ()
 void
 Crawl::Show ()
 {
-  msgList.clear();
+  ShowSeeds ();
+  ShowResults ();
+  mainUi.strollView->page()
+              ->setLinkDelegationPolicy (QWebPage::DelegateAllLinks);
+qDebug () << " page delegation policy " << mainUi.seedView->page()->linkDelegationPolicy();
+}
+
+void
+Crawl::ShowSeeds ()
+{
+  QStringList msgList;
   for (int i=0; i<sendQueue.count(); i++) {
     msgList.append (Link (sendQueue.at(i).toString()));
   }
@@ -235,6 +245,15 @@ Crawl::Show ()
                         .arg (head)
                         .arg (msgList.join ("<br>\n"));
   mainUi.seedView->setContent (seedHtml.toUtf8());
+  mainUi.seedView->page()
+              ->setLinkDelegationPolicy (QWebPage::DelegateAllLinks);
+  mainUi.resultView->page()
+              ->setLinkDelegationPolicy (QWebPage::DelegateAllLinks);
+}
+
+void
+Crawl::ShowResults ()
+{
   QStringList foundLinks;
   for (int i=0; i<foundList.count(); i++) {
     foundLinks.append (ResultLink (foundList.at(i).toString()));
@@ -243,14 +262,7 @@ Crawl::Show ()
                          .arg (head)
                          .arg (foundLinks.join ("<br>\n"));
   mainUi.resultView->setContent (resultHtml.toUtf8());
-  mainUi.seedView->page()
-              ->setLinkDelegationPolicy (QWebPage::DelegateAllLinks);
-  mainUi.resultView->page()
-              ->setLinkDelegationPolicy (QWebPage::DelegateAllLinks);
-  mainUi.strollView->page()
-              ->setLinkDelegationPolicy (QWebPage::DelegateAllLinks);
   mainUi.linkCount->setValue (foundList.count());
-qDebug () << " page delegation policy " << mainUi.seedView->page()->linkDelegationPolicy();
 }
 
 
@@ -307,7 +319,7 @@ Crawl::AddSeed ()
 {
   QString newurl = mainUi.seedUrlEdit->text();
   sendQueue.append (QUrl (newurl));
-  Show ();
+  ShowSeeds ();
 }
 
 void
@@ -338,6 +350,7 @@ Crawl::CrawlNext ()
     mainUi.currentFetch->setText (nextUrl.toString());
     loop->Fetch (nextUrl);
     mainUi.workLabel->setText ("working...");
+    ShowSeeds ();
   } else {
     mainUi.workLabel->setText ("Done");
   }
@@ -353,7 +366,7 @@ Crawl::CatchLink (const QString & link)
       foundList.append (url);
       mainUi.linkCount->setValue (foundList.count());
       oldLinks.insert (url);
-      Show ();
+      ShowResults ();
     }
   }
 }
@@ -376,7 +389,7 @@ Crawl::ResultClicked (const QUrl & url)
   if (scheme == "crawlseed") {
     qDebug () << " crawlseed clicked on " << url;
     sendQueue.append (RetrieveUrl (url));
-    Show ();
+    ShowSeeds ();
   } else if (scheme == "crawlsave") {
     qDebug () << " Save " << url;
     saveList.append (RetrieveUrl (url));
