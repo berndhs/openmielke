@@ -143,6 +143,8 @@ Crawl::Connect ()
 
   connect (loop, SIGNAL (FoundLink (const QString &)),
            this, SLOT (CatchLink (const QString &)));
+  connect (loop, SIGNAL (ReportLinks (const QString &, const QStringList &)),
+           this, SLOT (CatchReport (const QString &, const QStringList &)));
   connect (loop, SIGNAL (PageDone (bool)),
            this, SLOT (PageDone (bool)));
 }
@@ -254,13 +256,16 @@ Crawl::ShowSeeds ()
 void
 Crawl::ShowResults ()
 {
-  QStringList foundLinks;
+  QString headLine = QString("From Seed %1 get %2 links:")
+                              .arg (findSource)
+                              .arg (foundList.count());
+  foundReport.append (headLine);
   for (int i=0; i<foundList.count(); i++) {
-    foundLinks.append (ResultLink (foundList.at(i).toString()));
+    foundReport.append (ResultLink (foundList.at(i).toString()));
   }
   QString resultHtml = htmlEmbed
                          .arg (head)
-                         .arg (foundLinks.join ("<br>\n"));
+                         .arg (foundReport.join ("<br>\n"));
   mainUi.resultView->setContent (resultHtml.toUtf8());
   mainUi.linkCount->setValue (foundList.count());
 }
@@ -327,6 +332,7 @@ Crawl::StartCrawl ()
 {
   qDebug () << " start crawling";
   foundList.clear ();
+  foundReport.clear ();
   mainUi.sendProgress->setMaximum (sendQueue.count());
   progress = 0;
   mainUi.sendProgress->setValue (progress);
@@ -337,7 +343,6 @@ void
 Crawl::Cycle ()
 {
   sendQueue = foundList;
-  foundList.clear ();
   Show ();
   StartCrawl ();
 }
@@ -348,7 +353,7 @@ Crawl::CrawlNext ()
   if (!sendQueue.isEmpty ()) {
     QUrl nextUrl = sendQueue.takeFirst ();
     mainUi.currentFetch->setText (nextUrl.toString());
-    loop->Fetch (nextUrl);
+    loop->Fetch (nextUrl, false);
     mainUi.workLabel->setText ("working...");
     ShowSeeds ();
   } else {
@@ -357,25 +362,38 @@ Crawl::CrawlNext ()
 }
 
 void
-Crawl::CatchLink (const QString & link)
+Crawl::CatchLink (const QString & link, bool report)
 {
-  qDebug () << " got link " << link;
   QUrl url (link);
   if (url.scheme() == "http" || url.scheme() == "https") {
     if (!oldLinks.contains (url) && !blackList->IsKnown(url)) {
       foundList.append (url);
       mainUi.linkCount->setValue (foundList.count());
       oldLinks.insert (url);
-      ShowResults ();
+      if (report) {
+        ShowResults ();
+      }
     }
   }
+}
+
+void
+Crawl::CatchReport (const QString & sourceLink,
+                    const QStringList & linkList)
+{
+qDebug () << " catch report for " << sourceLink << linkList;
+  int nl = linkList.count();
+  findSource = sourceLink;
+  for (int l=0; l < nl; l++) {
+    CatchLink (linkList.at(l), false);
+  }
+  ShowResults ();
 }
 
 void
 Crawl::PageDone (bool ok)
 {
   qDebug () << " Page Done " << ok;
-  Show ();
   progress++;
   mainUi.sendProgress->setValue (progress);
   CrawlNext ();

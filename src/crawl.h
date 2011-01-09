@@ -73,7 +73,9 @@ private slots:
   void Cycle ();
   void SaveXML ();
   void SaveArado ();
-  void CatchLink (const QString & link);
+  void CatchLink (const QString & link, bool report=false);
+  void CatchReport (const QString & sourceLink, 
+                    const QStringList & linkList);
   void PageDone (bool ok);
   void LinkClicked (const QUrl & url);
   void ResultClicked (const QUrl & url);
@@ -104,7 +106,9 @@ private:
 
   QStringList   msgList;
   QList<QUrl>   sendQueue;
+  QString       findSource;
   QList<QUrl>   foundList;
+  QStringList   foundReport;
   QList<QUrl>   saveList;
   QSet <QUrl>   oldLinks;
 

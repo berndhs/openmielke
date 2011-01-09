@@ -20,27 +20,37 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QWebView" name="strollView">
-      <property name="url">
-       <url>
-        <string>about:blank</string>
-       </url>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
       </property>
+      <widget class="QWebView" name="strollView">
+       <property name="url">
+        <url>
+         <string>about:blank</string>
+        </url>
+       </property>
+      </widget>
+      <widget class="QWebView" name="resultView">
+       <property name="url">
+        <url>
+         <string>about:blank</string>
+        </url>
+       </property>
+      </widget>
+      <widget class="QWebView" name="seedView">
+       <property name="url">
+        <url>
+         <string>about:blank</string>
+        </url>
+       </property>
+      </widget>
      </widget>
     </item>
-    <item row="2" column="0">
-     <widget class="QWebView" name="seedView">
-      <property name="url">
-       <url>
-        <string>about:blank</string>
-       </url>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0">
+    <item row="1" column="0">
      <widget class="QLineEdit" name="currentFetch"/>
     </item>
-    <item row="5" column="0">
+    <item row="3" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QLabel" name="workLabel">
@@ -61,7 +71,7 @@
       </item>
      </layout>
     </item>
-    <item row="7" column="0">
+    <item row="5" column="0">
      <layout class="QFormLayout" name="formLayout">
       <property name="fieldGrowthPolicy">
        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
@@ -78,7 +88,7 @@
       </item>
      </layout>
     </item>
-    <item row="9" column="0">
+    <item row="7" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QSpinBox" name="linkCount">
@@ -139,15 +149,6 @@ Crawl</string>
        </widget>
       </item>
      </layout>
-    </item>
-    <item row="1" column="0">
-     <widget class="QWebView" name="resultView">
-      <property name="url">
-       <url>
-        <string>about:blank</string>
-       </url>
-      </property>
-     </widget>
     </item>
    </layout>
   </widget>

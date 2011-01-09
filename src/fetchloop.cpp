@@ -69,8 +69,10 @@ FetchLoop::FetchLoop (QObject *parent, QWebView * spyView)
 }
 
 void
-FetchLoop::Fetch (const QUrl & startUrl)
+FetchLoop::Fetch (const QUrl & startUrl, bool reportSingle)
 {
+  foundLinks.clear ();
+  startLink = startUrl.toString();
   if (startUrl.isValid ()) {
     qDebug () << " load " << startUrl;
     if (DontFetch (startUrl)) {
@@ -85,14 +87,6 @@ FetchLoop::Fetch (const QUrl & startUrl)
   } else {
     Done (false);
   }
-}
-
-void
-FetchLoop::LoadPage (const QUrl & url)
-{
-  net->get (QNetworkRequest (url));
-  loadTimeout->stop ();
-  loadTimeout->start (30*1000);
 }
 
 void
@@ -118,8 +112,13 @@ qDebug () << " ReadReply network error " << reply->error ();
 void
 FetchLoop::Done (bool ok)
 {
-  qDebug () << " done " << ok;
+  qDebug () << " done " << ok << " reportOne " 
+           << reportOne << " count " 
+           << foundLinks.count();
   loadTimeout->stop ();
+  if (ok && !reportOne) {
+    emit ReportLinks (startLink, foundLinks);
+  }
   emit PageDone (ok);
 }
 
@@ -147,6 +146,7 @@ FetchLoop::StopLoading ()
 void
 FetchLoop::LoadFinished (bool ok)
 {
+qDebug () << "LoadFinished " << ok;
   if (!ok) {
     Done (false);
     return;
@@ -169,6 +169,7 @@ qDebug () << " page from " << baseUrl << " frame count " << frames.count();
     if (frame) {
       QWebElementCollection links = frame->findAllElements ("A");
       int localLinkCount (0);
+qDebug () << " frame " << f << " A count " << links.count();
       foreach (QWebElement elt, links) {
         if (localLinkCount++ > 1000) {
           break;
@@ -181,7 +182,11 @@ qDebug () << " page from " << baseUrl << " frame count " << frames.count();
           linkText.prepend (baseUrl + sep);
         }
         if (linkText.length() > 0) {
-          emit FoundLink (linkText);
+          if (reportOne) {
+            emit FoundLink (linkText);
+          } else {
+            foundLinks.append (linkText);
+          }
         }
       }
     }

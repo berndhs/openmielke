@@ -39,8 +39,7 @@ public:
 
   FetchLoop (QObject *parent, QWebView * spyView);
   
-  void Fetch (const QUrl &);
-  void LoadPage (const QUrl & url);
+  void Fetch (const QUrl & startUrl, bool reportSingle=false);
 
 private slots:
 
@@ -51,6 +50,8 @@ private slots:
 signals:
 
   void FoundLink (const QString & link);
+  void ReportLinks (const QString sourceLink,
+                    const QStringList & resultList);
   void PageDone (bool ok);
 
 private:
@@ -62,6 +63,9 @@ private:
   QNetworkAccessManager    * net;
   QStringList                dontFetch;
   QString                    baseUrl;
+  bool                       reportOne;
+  QString                    startLink;
+  QStringList                foundLinks;
 
   QTimer  *loadTimeout;
 
