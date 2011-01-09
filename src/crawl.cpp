@@ -415,6 +415,8 @@ Crawl::SaveXML ()
     return;
   }
   QXmlStreamWriter xmlout (&file);
+  xmlout.setAutoFormatting (true);
+  xmlout.setAutoFormattingIndent (1);
   xmlout.writeStartDocument ();
   xmlout.writeStartElement ("urllist");
   int nu = saveList.count ();
@@ -444,6 +446,8 @@ Crawl::SaveArado ()
     return;
   }
   QXmlStreamWriter xmlout (&file);
+  xmlout.setAutoFormatting (true);
+  xmlout.setAutoFormattingIndent (1);
   xmlout.writeStartDocument ();
   xmlout.writeStartElement ("arado");
   int nu = saveList.count ();
