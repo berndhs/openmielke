@@ -101,19 +101,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="cycleButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Cycle</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="openmielke::CrawlButton" name="crawlButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
@@ -135,6 +122,19 @@
         <property name="text">
          <string>
 Crawl</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="cycleButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Cycle</string>
         </property>
        </widget>
       </item>
@@ -166,7 +166,8 @@ Crawl</string>
     </property>
     <addaction name="actionSettings"/>
     <addaction name="separator"/>
-    <addaction name="actionRestart"/>
+    <addaction name="actionSaveXML"/>
+    <addaction name="actionSaveArado"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -217,6 +218,16 @@ Crawl</string>
   <action name="actionRevive">
    <property name="text">
     <string>Revive Expired</string>
+   </property>
+  </action>
+  <action name="actionSaveXML">
+   <property name="text">
+    <string>Save as XML...</string>
+   </property>
+  </action>
+  <action name="actionSaveArado">
+   <property name="text">
+    <string>Save as Arado...</string>
    </property>
   </action>
  </widget>

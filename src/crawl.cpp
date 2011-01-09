@@ -32,6 +32,9 @@
 #include <QTimer>
 #include <QCursor>
 #include <QDesktopServices>
+#include <QFile>
+#include <QFileDialog>
+#include <QXmlStreamWriter>
 
 using namespace deliberate;
 
@@ -121,6 +124,11 @@ Crawl::Connect ()
            this, SLOT (AddSeed ()));
   connect (mainUi.cycleButton, SIGNAL (clicked()),
            this, SLOT (Cycle ()));
+  connect (mainUi.actionSaveXML, SIGNAL (triggered()),
+           this, SLOT (SaveXML()));
+  connect (mainUi.actionSaveArado, SIGNAL (triggered()),
+           this, SLOT (SaveArado ()));
+           
 
   connect (mainUi.seedView, SIGNAL (linkClicked(const QUrl &)),
            this, SLOT (LinkClicked (const QUrl &)));
@@ -263,7 +271,6 @@ Crawl::ResultLink (const QString & target)
 {
   QUrl url (target);
   QString origScheme = url.scheme();
-  url.setScheme ("crawlseed");
   QString path = url.path();
   path.prepend (origScheme);
   url.setPath (path);
@@ -272,10 +279,18 @@ Crawl::ResultLink (const QString & target)
   QString targetLink (QString("<a href=\"%1\" %2>%1</a>")
                   .arg (target)
                   .arg (targetStyle));
+  url.setScheme ("crawlseed");
   QString seedLink (QString("<a href=\"%1\" %3>seed</a>")
                      .arg (url.toString())
                      .arg (seedStyle));
-  return QString ("%1--%2").arg (seedLink).arg(targetLink);
+  url.setScheme ("crawlsave");
+  QString saveLink (QString("<a href=\"%1\" %3>save</a>")
+                     .arg (url.toString())
+                     .arg (seedStyle));
+  return QString ("%1--%2--%3")
+                 .arg (saveLink)
+                 .arg (seedLink)
+                 .arg (targetLink);
 }
 
 void
@@ -360,18 +375,89 @@ Crawl::ResultClicked (const QUrl & url)
   QString scheme = url.scheme();
   if (scheme == "crawlseed") {
     qDebug () << " crawlseed clicked on " << url;
-    QUrl newUrl (url);
-    QStringList parts = url.path().split('/');
-    parts.removeFirst();
-    QString oldScheme = parts.takeFirst();
-    newUrl.setScheme (oldScheme);
-    newUrl.setPath (parts.join("/"));
-    sendQueue.append (newUrl);
+    sendQueue.append (RetrieveUrl (url));
     Show ();
+  } else if (scheme == "crawlsave") {
+    qDebug () << " Save " << url;
+    saveList.append (RetrieveUrl (url));
   } else {
     QDesktopServices::openUrl (url);
   }
 }
+
+QUrl
+Crawl::RetrieveUrl (const QUrl & savedUrl)
+{
+  QUrl origUrl (savedUrl);
+  QStringList parts = savedUrl.path().split('/');
+  parts.removeFirst();
+  QString oldScheme = parts.takeFirst();
+  origUrl.setScheme (oldScheme);
+  origUrl.setPath (parts.join("/"));
+  return origUrl;
+}
+
+void
+Crawl::SaveXML ()
+{
+  QString filename = QFileDialog::getSaveFileName (this,
+                 "Save URL List");
+  if (filename.length() < 1) {
+    return;
+  }
+  QFile file (filename);
+  bool ok = file.open (QFile::WriteOnly);
+  if (!ok) {
+    QMessageBox box;
+    box.setText (tr("Cannot write file \"%1\"").arg(filename));
+    QTimer::singleShot (15000, &box, SLOT(reject()));
+    box.exec ();
+    return;
+  }
+  QXmlStreamWriter xmlout (&file);
+  xmlout.writeStartDocument ();
+  xmlout.writeStartElement ("urllist");
+  int nu = saveList.count ();
+  for (int u=0; u<nu; u++) {
+    xmlout.writeTextElement ("url",saveList.at(u).toString());
+  }
+  xmlout.writeEndElement (); // urllist
+  xmlout.writeEndDocument ();
+  file.close ();
+}
+
+void
+Crawl::SaveArado ()
+{
+  QString filename = QFileDialog::getSaveFileName (this,
+                 "Save Arado URL List");
+  if (filename.length() < 1) {
+    return;
+  }
+  QFile file (filename);
+  bool ok = file.open (QFile::WriteOnly);
+  if (!ok) {
+    QMessageBox box;
+    box.setText (tr("Cannot write file \"%1\"").arg(filename));
+    QTimer::singleShot (15000, &box, SLOT(reject()));
+    box.exec ();
+    return;
+  }
+  QXmlStreamWriter xmlout (&file);
+  xmlout.writeStartDocument ();
+  xmlout.writeStartElement ("arado");
+  int nu = saveList.count ();
+  for (int u=0; u<nu; u++) {
+    xmlout.writeStartElement ("aradourl");
+    xmlout.writeTextElement ("url",saveList.at(u).toString());
+    xmlout.writeEndElement (); // aradourl
+  }
+  xmlout.writeEndElement (); // arado
+  xmlout.writeEndDocument ();
+  file.close();
+}
+
+
 
 void
 Crawl::LinkClicked (const QUrl & url)
