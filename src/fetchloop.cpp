@@ -150,7 +150,6 @@ FetchLoop::StopLoading ()
 void
 FetchLoop::LoadFinished (bool ok)
 {
-qDebug () << "LoadFinished " << ok;
   if (!ok) {
     Done (false);
     return;
@@ -167,35 +166,62 @@ qDebug () << "LoadFinished " << ok;
   }
   QList<QWebFrame*> frames = mainFrame->childFrames();
   frames.prepend (mainFrame);
-qDebug () << " page from " << baseUrl << " frame count " << frames.count();
   for (int f=0; f<frames.count(); f++) {
     QWebFrame * frame = frames.at(f);
     if (frame) {
-      QWebElementCollection links = frame->findAllElements ("A");
-      int localLinkCount (0);
-qDebug () << " frame " << f << " A count " << links.count();
-      foreach (QWebElement elt, links) {
-        if (localLinkCount++ > 1000) {
-          break;
-        }
-        QString linkText (elt.attribute ("href"));
-        QUrl linkUrl (linkText);
-        if (linkUrl.scheme().length() < 1) {
-          QString sep (linkText.startsWith ('/') 
-                       || baseUrl.endsWith('/') ? "" : "/");
-          linkText.prepend (baseUrl + sep);
-        }
-        if (linkText.length() > 0) {
-          if (reportOne) {
-            emit FoundLink (linkText);
-          } else {
-            foundLinks.append (linkText);
-          }
-        }
-      }
+      GetMeta (frame);
+      GetLinks (frame);
     }
   }
   Done (true);
+}
+
+void
+FetchLoop::GetLinks (QWebFrame * frame)
+{
+  QWebElementCollection links = frame->findAllElements ("A");
+  int localLinkCount (0);
+  foreach (QWebElement elt, links) {
+    if (localLinkCount++ > 1000) {
+      break;
+    }
+    QString linkText (elt.attribute ("href"));
+    QUrl linkUrl (linkText);
+    if (linkUrl.scheme().length() < 1) {
+      QString sep (linkText.startsWith ('/') 
+               || baseUrl.endsWith('/') ? "" : "/");
+      linkText.prepend (baseUrl + sep);
+    }
+    if (linkText.length() > 0) {
+      if (reportOne) {
+        emit FoundLink (linkText);
+      } else {
+        foundLinks.append (linkText);
+      }
+    }
+  }
+}
+
+void
+FetchLoop::GetMeta (QWebFrame * frame)
+{
+  QString words;
+  QWebElementCollection titles = frame->findAllElements ("TITLE");
+  foreach (QWebElement title, titles ) {
+    QString headline = title.toPlainText();
+    words.append (headline);
+  }
+  QWebElementCollection metas = frame->findAllElements ("META");
+  foreach (QWebElement meta, metas) {
+    QString name = meta.attribute ("name");
+    qDebug () << " meta is called " << name << " has valye " << meta.attribute("content");
+    if (name == "keywords") {
+      words += " ";
+      words += meta.attribute ("content");
+    }
+  }
+qDebug () << " GetMeta found " << words;
+  emit Keywords (words);
 }
 
 } // namespace

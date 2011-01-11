@@ -147,6 +147,8 @@ Crawl::Connect ()
            this, SLOT (CatchReport (const QString &, const QStringList &)));
   connect (loop, SIGNAL (PageDone (bool)),
            this, SLOT (PageDone (bool)));
+  connect (loop, SIGNAL (Keywords (const QString &)),
+           this, SLOT (CatchKeywords (const QString &)));
 }
 
 void
@@ -260,6 +262,9 @@ Crawl::ShowResults ()
                               .arg (findSource)
                               .arg (foundList.count());
   foundReport.append (headLine);
+  if (keywords.length() > 0) {
+    foundReport.append (QString ("keywords: %1\n").arg(keywords));
+  }
   for (int i=0; i<foundList.count(); i++) {
     foundReport.append (ResultLink (foundList.at(i).toString()));
   }
@@ -356,6 +361,7 @@ Crawl::CrawlNext ()
     if (getSiteMap) {
       siteMapHost = nextUrl.host();
     }
+    keywords.clear ();
     loop->Fetch (nextUrl, false);
     mainUi.workLabel->setText ("working...");
     ShowSeeds ();
@@ -386,10 +392,15 @@ Crawl::CatchLink (const QString & link, bool report)
 }
 
 void
+Crawl::CatchKeywords (const QString & words)
+{
+  keywords += words;
+}
+
+void
 Crawl::CatchReport (const QString & sourceLink,
                     const QStringList & linkList)
 {
-qDebug () << " catch report for " << sourceLink << linkList;
   int nl = linkList.count();
   findSource = sourceLink;
   for (int l=0; l < nl; l++) {

@@ -51,6 +51,7 @@ private slots:
 signals:
 
   void FoundLink (const QString & link);
+  void Keywords (const QString & words);
   void ReportLinks (const QString sourceLink,
                     const QStringList & resultList);
   void PageDone (bool ok);
@@ -59,6 +60,8 @@ private:
 
   bool DontFetch (const QUrl & url);
   void Done (bool ok);
+  void GetLinks (QWebFrame * frame);
+  void GetMeta (QWebFrame * frame);
 
   QWebView                 * view;
   QNetworkAccessManager    * net;

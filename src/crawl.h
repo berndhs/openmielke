@@ -74,6 +74,7 @@ private slots:
   void SaveXML ();
   void SaveArado ();
   void CatchLink (const QString & link, bool report=false);
+  void CatchKeywords (const QString & words);
   void CatchReport (const QString & sourceLink, 
                     const QStringList & linkList);
   void PageDone (bool ok);
@@ -109,6 +110,7 @@ private:
   QString       findSource;
   QList<QUrl>   foundList;
   QStringList   foundReport;
+  QString       keywords;
   QList<QUrl>   saveList;
   QSet <QUrl>   oldLinks;
 
