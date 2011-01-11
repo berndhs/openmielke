@@ -27,6 +27,7 @@
 #include "helpview.h"
 #include "fetchloop.h"
 #include <QUrl>
+#include "craw-button.h"
 
 class QApplication;
 
