@@ -91,9 +91,9 @@
     <item row="7" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QSpinBox" name="linkCount">
-        <property name="maximum">
-         <number>1000000000</number>
+       <widget class="QCheckBox" name="sitemapCheck">
+        <property name="text">
+         <string>Site Map</string>
         </property>
        </widget>
       </item>

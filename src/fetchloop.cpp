@@ -105,7 +105,11 @@ qDebug () << " ReadReply network error " << reply->error ();
     return ;
   }
   baseUrl = reply->url().toString();
+  #if 0
   view->setContent (data, QString(), reply->url());
+  #else
+  view->setContent (data);
+  #endif
   //view->setContent (data);
 }
 

@@ -39,7 +39,8 @@ public:
 
   FetchLoop (QObject *parent, QWebView * spyView);
   
-  void Fetch (const QUrl & startUrl, bool reportSingle=false);
+  void Fetch (const QUrl & startUrl, 
+              bool reportSingle=false);
 
 private slots:
 

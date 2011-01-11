@@ -30,6 +30,7 @@ TEMPLATE = app
 
 QT += core gui webkit network xml 
 CONFIG += debug_and_release
+INCLUDEPATH += ./src
 
 !include ("options.pri") {
   message ("no options.pri, using defaults")

@@ -267,7 +267,6 @@ Crawl::ShowResults ()
                          .arg (head)
                          .arg (foundReport.join ("<br>\n"));
   mainUi.resultView->setContent (resultHtml.toUtf8());
-  mainUi.linkCount->setValue (foundList.count());
 }
 
 
@@ -336,6 +335,7 @@ Crawl::StartCrawl ()
   mainUi.sendProgress->setMaximum (sendQueue.count());
   progress = 0;
   mainUi.sendProgress->setValue (progress);
+  getSiteMap = mainUi.sitemapCheck->isChecked();
   CrawlNext ();
 }
 
@@ -353,6 +353,9 @@ Crawl::CrawlNext ()
   if (!sendQueue.isEmpty ()) {
     QUrl nextUrl = sendQueue.takeFirst ();
     mainUi.currentFetch->setText (nextUrl.toString());
+    if (getSiteMap) {
+      siteMapHost = nextUrl.host();
+    }
     loop->Fetch (nextUrl, false);
     mainUi.workLabel->setText ("working...");
     ShowSeeds ();
@@ -367,8 +370,13 @@ Crawl::CatchLink (const QString & link, bool report)
   QUrl url (link);
   if (url.scheme() == "http" || url.scheme() == "https") {
     if (!oldLinks.contains (url) && !blackList->IsKnown(url)) {
-      foundList.append (url);
-      mainUi.linkCount->setValue (foundList.count());
+      if (getSiteMap) {
+        if (url.host() == siteMapHost) {
+          foundList.append (url);
+        }
+      } else {
+        foundList.append (url);
+      }
       oldLinks.insert (url);
       if (report) {
         ShowResults ();

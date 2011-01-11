@@ -120,6 +120,8 @@ private:
   FetchLoop    *loop;
   SpecialList  *blackList;
   QWebPage     *myPage;
+  bool          getSiteMap;
+  QString       siteMapHost;
 
 };
 
