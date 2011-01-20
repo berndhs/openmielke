@@ -34,6 +34,7 @@
 #include <QDesktopServices>
 #include <QFile>
 #include <QFileDialog>
+#include <QRegExp>
 #include <QXmlStreamWriter>
 
 using namespace deliberate;
@@ -147,8 +148,8 @@ Crawl::Connect ()
            this, SLOT (CatchReport (const QString &, const QStringList &)));
   connect (loop, SIGNAL (PageDone (bool)),
            this, SLOT (PageDone (bool)));
-  connect (loop, SIGNAL (Keywords (const QString &)),
-           this, SLOT (CatchKeywords (const QString &)));
+  connect (loop, SIGNAL (Keywords (const QString &, const QString &)),
+           this, SLOT (CatchKeywords (const QString &, const QString &)));
 }
 
 void
@@ -258,13 +259,21 @@ Crawl::ShowSeeds ()
 void
 Crawl::ShowResults ()
 {
-  QString headLine = QString("From Seed %1 get %2 links:")
+  QUrl url (findSource);
+  QString origScheme = url.scheme();
+  QString path = url.path();
+  path.prepend (origScheme);
+  url.setPath (path);
+  url.setScheme ("crawlkeys");
+  QString keyStyle ("style=\"color:#10f0f0\"");
+  QString keyLink (QString("<a href=\"%1\" %2>keywords</a>")
+                     .arg (url.toString())
+                     .arg (keyStyle));
+  QString headLine = QString("From Seed %1 %2 get %3 links:")
                               .arg (findSource)
+                              .arg (keyLink)
                               .arg (foundList.count());
   foundReport.append (headLine);
-  if (keywords.length() > 0) {
-    foundReport.append (QString ("keywords: %1\n").arg(keywords));
-  }
   for (int i=0; i<foundList.count(); i++) {
     foundReport.append (ResultLink (foundList.at(i).toString()));
   }
@@ -307,7 +316,7 @@ Crawl::ResultLink (const QString & target)
   url.setScheme ("crawlsave");
   QString saveLink (QString("<a href=\"%1\" %3>save</a>")
                      .arg (url.toString())
-                     .arg (seedStyle));
+                     .arg (seedStyle)); 
   return QString ("%1--%2--%3")
                  .arg (saveLink)
                  .arg (seedLink)
@@ -392,9 +401,11 @@ Crawl::CatchLink (const QString & link, bool report)
 }
 
 void
-Crawl::CatchKeywords (const QString & words)
+Crawl::CatchKeywords (const QString & startUrl, const QString & words)
 {
-  keywords += words;
+qDebug () << " keywords of " << startUrl << " before " << keywords[startUrl];
+  keywords[startUrl] += words.split (QRegExp("\\s"));
+qDebug () << " keywords of " << startUrl << " after " << keywords[startUrl];
 }
 
 void
@@ -430,6 +441,12 @@ Crawl::ResultClicked (const QUrl & url)
   } else if (scheme == "crawlsave") {
     qDebug () << " Save " << url;
     saveList.append (RetrieveUrl (url));
+  } else if (scheme == "crawlkeys") {
+    QString urlString = RetrieveUrl (url).toString();
+    qDebug () << " keywords for " << urlString;
+    qDebug () << keywords[urlString];
+    QString html ("<html><body>%1</body></html>");
+    mainUi.strollView->setHtml (html.arg(keywords[urlString].join("<br>\n")));
   } else {
     QDesktopServices::openUrl (url);
   }

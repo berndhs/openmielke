@@ -51,7 +51,7 @@ private slots:
 signals:
 
   void FoundLink (const QString & link);
-  void Keywords (const QString & words);
+  void Keywords (const QString & urlString, const QString & words);
   void ReportLinks (const QString sourceLink,
                     const QStringList & resultList);
   void PageDone (bool ok);

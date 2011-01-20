@@ -229,14 +229,14 @@ FetchLoop::GetMeta (QWebFrame * frame)
   QWebElementCollection metas = frame->findAllElements ("META");
   foreach (QWebElement meta, metas) {
     QString name = meta.attribute ("name");
-    qDebug () << " meta is called " << name << " has valye " << meta.attribute("content");
+    qDebug () << " meta is called " << name << " has value " << meta.attribute("content");
     if (name == "keywords") {
       words += " ";
       words += meta.attribute ("content");
     }
   }
-qDebug () << " GetMeta found " << words;
-  emit Keywords (words);
+qDebug () << " GetMeta " << startLink << " found " << words;
+  emit Keywords (startLink, words);
 }
 
 } // namespace
