@@ -71,6 +71,7 @@ FetchLoop::FetchLoop (QObject *parent, QWebView * spyView)
 void
 FetchLoop::Fetch (const QUrl & startUrl, bool reportSingle)
 {
+  Q_UNUSED (reportSingle);
   foundLinks.clear ();
   startLink = startUrl.toString();
   if (startUrl.isValid ()) {
@@ -90,13 +91,27 @@ FetchLoop::Fetch (const QUrl & startUrl, bool reportSingle)
 }
 
 void
+FetchLoop::ForwardTo (const QUrl & url)
+{
+  net->get (QNetworkRequest (url));
+}
+
+void
 FetchLoop::ReadReply (QNetworkReply * reply)
 {
   if (reply == 0) {
     return;
   }
   int maxd (10*1024*1024);
-qDebug () << " ReadReply network error " << reply->error ();
+  qDebug () << " ReadReply network error " << reply->error ();
+  qDebug () << "       url " << reply->url();
+  if (reply->hasRawHeader("Location")) {
+    // forward 
+    QByteArray newurl = reply->rawHeader ("Location");
+    qDebug () << "Forward to " << newurl;
+    ForwardTo (QUrl (QString(newurl)));
+    return;
+  }
   QByteArray data = reply->read (maxd);
   qDebug () << " data size " << data.size () 
          << " for url " << reply->url();

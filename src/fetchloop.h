@@ -62,6 +62,7 @@ private:
   void Done (bool ok);
   void GetLinks (QWebFrame * frame);
   void GetMeta (QWebFrame * frame);
+  void ForwardTo (const QUrl & url);
 
   QWebView                 * view;
   QNetworkAccessManager    * net;
