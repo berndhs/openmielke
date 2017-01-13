@@ -5,7 +5,7 @@
 #/****************************************************************
 # * This file is distributed under the following license:
 # *
-# * Copyright (C) 2011, Bernd Stramm
+# * Copyright (C) 2017, Bernd Stramm
 # *
 # *  This program is free software; you can redistribute it and/or
 # *  modify it under the terms of the GNU General Public License
@@ -28,7 +28,15 @@ APPBIN = openmielke
 
 TEMPLATE = app
 
-QT += core gui webkit network xml 
+QT += core gui webkit network xml
+
+QT += qml
+QT += quick
+QT += widgets
+QT += sql
+QT += network
+QT += core
+
 CONFIG += debug_and_release
 INCLUDEPATH += ./src
 
