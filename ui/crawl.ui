@@ -24,21 +24,21 @@
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
-      <widget class="QWebView" name="strollView">
+      <widget class="QWebEngineView" name="strollView">
        <property name="url">
         <url>
          <string>about:blank</string>
         </url>
        </property>
       </widget>
-      <widget class="QWebView" name="resultView">
+      <widget class="QWebEngineView" name="resultView">
        <property name="url">
         <url>
          <string>about:blank</string>
         </url>
        </property>
       </widget>
-      <widget class="QWebView" name="seedView">
+      <widget class="QWebEngineView" name="seedView">
        <property name="url">
         <url>
          <string>about:blank</string>
@@ -234,9 +234,9 @@ Crawl</string>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QWebView</class>
+   <class>QWebEngineView</class>
    <extends>QWidget</extends>
-   <header>QtWebKit/QWebView</header>
+   <header>QtWebKit/QWebEngineView</header>
   </customwidget>
   <customwidget>
    <class>openmielke::CrawlButton</class>

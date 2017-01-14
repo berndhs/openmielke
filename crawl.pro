@@ -28,11 +28,12 @@ APPBIN = openmielke
 
 TEMPLATE = app
 
-QT += core gui webkit network xml
-
+QT += core
 QT += qml
 QT += quick
 QT += widgets
+QT += webengine
+QT += webenginewidgets
 QT += sql
 QT += network
 QT += core
@@ -88,6 +89,7 @@ HEADERS = \
           src/fetchloop.h \
           src/special-list.h \
           src/crawl-button.h \
+    src/crawlpageview.h
 
 
 SOURCES = \
@@ -102,4 +104,5 @@ SOURCES = \
           src/fetchloop.cpp \
           src/special-list.cpp \
           src/crawl-button.cpp \
+    src/crawlpageview.cpp
 

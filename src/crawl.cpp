@@ -36,6 +36,7 @@
 #include <QFileDialog>
 #include <QRegExp>
 #include <QXmlStreamWriter>
+#include "crawlpageview.h"
 
 using namespace deliberate;
 
@@ -53,7 +54,7 @@ Crawl::Crawl (QWidget *parent)
    blackList (0)
 {
   mainUi.setupUi (this);
-  myPage = new QWebPage (this);
+  myPage = new CrawlPageView (this);
   mainUi.seedView->setPage (myPage);
   loop = new FetchLoop (this, mainUi.strollView);
   blackList = new SpecialList;
@@ -234,9 +235,7 @@ Crawl::Show ()
 {
   ShowSeeds ();
   ShowResults ();
-  mainUi.strollView->page()
-              ->setLinkDelegationPolicy (QWebPage::DelegateAllLinks);
-qDebug () << " page delegation policy " << mainUi.seedView->page()->linkDelegationPolicy();
+//qDebug () << " page delegation policy " << mainUi.seedView->page()->linkDelegationPolicy();
 }
 
 void
@@ -250,10 +249,6 @@ Crawl::ShowSeeds ()
                         .arg (head)
                         .arg (msgList.join ("<br>\n"));
   mainUi.seedView->setContent (seedHtml.toUtf8());
-  mainUi.seedView->page()
-              ->setLinkDelegationPolicy (QWebPage::DelegateAllLinks);
-  mainUi.resultView->page()
-              ->setLinkDelegationPolicy (QWebPage::DelegateAllLinks);
 }
 
 void

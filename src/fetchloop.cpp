@@ -23,8 +23,8 @@
  ****************************************************************/
 
 
-#include <QWebFrame>
-#include <QWebPage>
+#include <QWebEnginePage>
+#include <QWebEnginePage>
 #include <QWebElement>
 #include <QWebElementCollection>
 #include <QNetworkAccessManager>
@@ -36,13 +36,13 @@
 namespace openmielke
 {
 
-FetchLoop::FetchLoop (QObject *parent, QWebView * spyView)
+FetchLoop::FetchLoop (QObject *parent, QWebEngineView * spyView)
   :QObject (parent)
 {
   if (spyView) {
     view = spyView;
   } else {
-    view = new QWebView;
+    view = new QWebEngineView;
   }
   net = new QNetworkAccessManager (this);
   connect (view, SIGNAL (loadFinished (bool)),
@@ -169,20 +169,20 @@ FetchLoop::LoadFinished (bool ok)
     Done (false);
     return;
   }
-  QWebPage * page = view->page ();
+  QWebEnginePage * page = view->page ();
   if (page == 0) {
     Done (false);
     return;
   }
-  QWebFrame * mainFrame = page->mainFrame();
+  QWebEnginePage * mainFrame = page->mainFrame();
   if (mainFrame == 0) {
     Done (false);
     return;
   }
-  QList<QWebFrame*> frames = mainFrame->childFrames();
+  QList<QWebEnginePage*> frames = mainFrame->childFrames();
   frames.prepend (mainFrame);
   for (int f=0; f<frames.count(); f++) {
-    QWebFrame * frame = frames.at(f);
+    QWebEnginePage * frame = frames.at(f);
     if (frame) {
       GetMeta (frame);
       GetLinks (frame);
@@ -192,7 +192,7 @@ FetchLoop::LoadFinished (bool ok)
 }
 
 void
-FetchLoop::GetLinks (QWebFrame * frame)
+FetchLoop::GetLinks (QWebEnginePage * frame)
 {
   QWebElementCollection links = frame->findAllElements ("A");
   int localLinkCount (0);
@@ -209,7 +209,7 @@ FetchLoop::GetLinks (QWebFrame * frame)
     }
     if (linkText.length() > 0) {
       if (reportOne) {
-        emit FoundLink (linkText);
+        emit Found1Link (linkText);
       } else {
         foundLinks.append (linkText);
       }
@@ -218,7 +218,7 @@ FetchLoop::GetLinks (QWebFrame * frame)
 }
 
 void
-FetchLoop::GetMeta (QWebFrame * frame)
+FetchLoop::GetMeta (QWebEnginePage * frame)
 {
   QString words;
   QWebElementCollection titles = frame->findAllElements ("TITLE");

@@ -25,7 +25,7 @@
 
 
 #include <QObject>
-#include <QtWebKit>
+#include <QWebEngineView>
 
 class QTimer;
 class QNetworkAccessManager;
@@ -37,7 +37,7 @@ class FetchLoop : public QObject
 Q_OBJECT
 public:
 
-  FetchLoop (QObject *parent, QWebView * spyView);
+  FetchLoop (QObject *parent, QWebEngineView * spyView);
   
   void Fetch (const QUrl & startUrl, 
               bool reportSingle=false);
@@ -50,7 +50,7 @@ private slots:
 
 signals:
 
-  void FoundLink (const QString & link);
+  void Found1Link (const QString & link);
   void Keywords (const QString & urlString, const QString & words);
   void ReportLinks (const QString sourceLink,
                     const QStringList & resultList);
@@ -60,11 +60,11 @@ private:
 
   bool DontFetch (const QUrl & url);
   void Done (bool ok);
-  void GetLinks (QWebFrame * frame);
-  void GetMeta (QWebFrame * frame);
+  void GetLinks (QWebEnginePage * frame);
+  void GetMeta (QWebEnginePage * frame);
   void ForwardTo (const QUrl & url);
 
-  QWebView                 * view;
+  QWebEngineView                 * view;
   QNetworkAccessManager    * net;
   QStringList                dontFetch;
   QString                    baseUrl;

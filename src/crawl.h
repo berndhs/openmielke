@@ -122,7 +122,7 @@ private:
 
   FetchLoop    *loop;
   SpecialList  *blackList;
-  QWebPage     *myPage;
+  QWebEnginePage     *myPage;
   bool          getSiteMap;
   QString       siteMapHost;
 
